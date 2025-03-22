@@ -57,3 +57,10 @@ This can also be used to control which fork is used, though only upstream `qmk_f
 1. (First time only) `git submodule add https://github.com/qmk/qmk_firmware.git`
 1. (To update) `git submodule update --init --recursive`
 1. Commit your changes to your userspace repository
+
+## License
+The majority of this repository is licensed under the GPL Version 2, and will be unless otherwise stated.
+
+Exceptions, released under the Apache 2 License
+* keyboards/doio/kb16/rev2/keymaps/robotdisco/aliases.c
+* keyboards/doio/kb16/rev2/keymaps/robotdisco/combos.c

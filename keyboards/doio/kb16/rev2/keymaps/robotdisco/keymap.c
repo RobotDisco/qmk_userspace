@@ -1,140 +1,82 @@
-/* Copyright 2022 DOIO
- * Copyright 2022 HorrorTroll <https://github.com/HorrorTroll>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// Copyright 2023 QMK
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #include QMK_KEYBOARD_H
 
-// OLED animation
-#include "lib/layer_status/layer_status.h"
-
-// Each layer gets a name for readability, which is then used in the keymap matrix below.
-// The underscores don't mean anything - you can have a layer called STUFF or any other name.
-// Layer names don't all need to be of the same length, obviously, and you can also skip them
-// entirely and just use numbers.
-
-enum layer_names {
-    _BASE,
-    _FN,
-    _FN1,
-    _FN2
+enum layers {
+  _ART_BASE,
+  _ART_NUM,
+  _ART_CUS,
+  _ART_PUNC,
+  _ART_MOU,
+  _ART_NAV,
+  _ART_SYM,
 };
 
-// enum layer_keycodes { };
+#include "aliases.c"
+#include "combos.c"
+
+// copied from https://beta.docs.qmk.fm/faqs/faq_debug#which-matrix-position-is-this-keypress
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  // If console is enabled, it will print the matrix position and status of each key pressed
+#ifdef CONSOLE_ENABLE
+    uprintf("KL: kc: 0x%04X, col: %u, row: %u, pressed: %b, time: %u, interrupt: %b, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+#endif
+  return true;
+}
+
+
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-/*
-       ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
-       │ 1 │ 2 │ 3 │ 4 │   │Ply│ │TO1│
-       ├───┼───┼───┼───┤   └───┘ └───┘
-       │ 5 │ 6 │ 7 │ 8 │
-       ├───┼───┼───┼───┤
-       │ 9 │ 0 │ ↑ │Ent│      ┌───┐
-       ├───┼───┼───┼───┤      │Mut│
-       │Fn2│ ← │ ↓ │ → │      └───┘
-       └───┴───┴───┴───┘
-       ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
-       │ ! │ @ │ # │ $ │   │   │ │   │
-       ├───┼───┼───┼───┤   └───┘ └───┘
-       │ % │ ^ │ & │ * │
-       ├───┼───┼───┼───┤
-       │ ( │ ) │   │   │      ┌───┐
-       ├───┼───┼───┼───┤      │   │
-       │   │   │   │   │      └───┘
-       └───┴───┴───┴───┘
-*/
-    /*  Row:    0         1        2        3         4      */
-    [_BASE] = LAYOUT(
-                KC_1,     KC_2,    KC_3,    KC_4,     KC_MPLY,
-                KC_5,     KC_6,    KC_7,    KC_8,     TO(_FN),
-                KC_9,     KC_0,    KC_UP,   KC_ENT,   KC_MUTE,
-                MO(_FN2), KC_LEFT, KC_DOWN, KC_RIGHT
-            ),
+[_ART_BASE] = LAYOUT(
+                     KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                     KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                     BASE_1_1,BASE_1_2,BASE_1_3,BASE_1_4,KC_NO,
+                     BASE_2_1,BASE_2_2,BASE_2_3,BASE_2_4
+),
 
-/*
-       ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
-       │   │   │   │   │   │   │ │   │
-       ├───┼───┼───┼───┤   └───┘ └───┘
-       │   │   │   │   │
-       ├───┼───┼───┼───┤
-       │   │   │   │   │      ┌───┐
-       ├───┼───┼───┼───┤      │   │
-       │   │   │   │   │      └───┘
-       └───┴───┴───┴───┘
-*/
-    /*  Row:    0        1        2        3        4       */
-    [_FN] = LAYOUT(
-                _______, _______, _______, _______, _______,
-                _______, _______, _______, _______, TO(_FN1),
-                _______, _______, _______, _______, _______,
-                _______, _______, _______, _______
-            ),
+[_ART_NUM] = LAYOUT(
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    NUM_1_1,NUM_1_2,NUM_1_3,NUM_1_4,KC_NO,
+                    NUM_2_1,NUM_2_2,NUM_2_3,NUM_2_4
+),
 
-/*
-       ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
-       │   │   │   │   │   │   │ │   │
-       ├───┼───┼───┼───┤   └───┘ └───┘
-       │   │   │   │   │
-       ├───┼───┼───┼───┤
-       │   │   │   │   │      ┌───┐
-       ├───┼───┼───┼───┤      │   │
-       │   │   │   │   │      └───┘
-       └───┴───┴───┴───┘
-*/
-    /*  Row:    0        1        2        3        4       */
-    [_FN1] = LAYOUT(
-                _______, _______, _______, _______, _______,
-                _______, _______, _______, _______, TO(_FN2),
-                _______, _______, _______, _______, _______,
-                _______, _______, _______, _______
-            ),
 
-/*
-       ┌───┬───┬───┬───┐   ┌───┐ ┌───┐
-       │Spi│Spd│   │   │   │   │ │TO0│
-       ├───┼───┼───┼───┤   └───┘ └───┘
-       │Sai│Sad│   │   │
-       ├───┼───┼───┼───┤
-       │Tog│Mod│Hui│   │      ┌───┐
-       ├───┼───┼───┼───┤      │   │
-       │   │Vai│Hud│Vad│      └───┘
-       └───┴───┴───┴───┘
-*/
-    /*  Row:    0        1        2        3        4        */
-    [_FN2] = LAYOUT(
-                RM_SPDU, RM_SPDD, _______, QK_BOOT, _______,
-                RM_SATU, RM_SATD, _______, _______, TO(_BASE),
-                RM_TOGG, RM_NEXT, RM_HUEU, _______, _______,
-                _______, RM_VALU, RM_HUED, RM_VALD
-            ),
+[_ART_PUNC] = LAYOUT(
+                     KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                     KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                     PUNC_1_1,PUNC_1_2,PUNC_1_3,PUNC_1_4,KC_NO,
+                     PUNC_2_1,PUNC_2_2,PUNC_2_3,PUNC_2_4
+),
+
+[_ART_CUS] = LAYOUT(
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    CUS_1_1,CUS_1_2,CUS_1_3,CUS_1_4,KC_NO,
+                    CUS_2_1,CUS_2_2,CUS_2_3,CUS_2_4
+),
+
+[_ART_SYM] = LAYOUT(
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    SYM_1_1,SYM_1_2,SYM_1_3,SYM_1_4,KC_NO,
+                    SYM_2_1,SYM_2_2,SYM_2_3,SYM_2_4
+),
+
+[_ART_MOU] = LAYOUT(
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    MOU_1_1,MOU_1_2,MOU_1_3,MOU_1_4,KC_NO,
+                    MOU_2_1,MOU_2_2,MOU_2_3,MOU_2_4
+),
+
+[_ART_NAV] = LAYOUT(
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    KC_NO,KC_NO,KC_NO,KC_NO,KC_NO,
+                    NAV_1_1,NAV_1_2,NAV_1_3,NAV_1_4,KC_NO,
+                    NAV_2_1,NAV_2_2,NAV_2_3,NAV_2_4
+),
 };
-
-#ifdef OLED_ENABLE
-    bool oled_task_user(void) {
-        render_layer_status();
-
-        return true;
-    }
-#endif
-
-#ifdef ENCODER_MAP_ENABLE
-const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [_BASE] = { ENCODER_CCW_CW(KC_MPRV, KC_MNXT), ENCODER_CCW_CW(KC_PGDN, KC_PGUP), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [_FN]   = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
-    [_FN1]  = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
-    [_FN2]  = { ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS), ENCODER_CCW_CW(KC_TRNS, KC_TRNS) },
-};
-#endif
